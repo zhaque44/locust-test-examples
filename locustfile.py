@@ -8,9 +8,9 @@ class SomeTest(TaskSet):
     number of seconds returned by it’s wait_time function.
     """
 
-    _scopes = [
-    "experiments:read",
-    "experiments:write",
+    oauth_scopes = [
+        "service:read",
+        "service:write",
     ]
 
     def on_start(self):
@@ -20,7 +20,7 @@ class SomeTest(TaskSet):
         :param self represents its instance within this function
         example:
         self.client.post(
-        "https://pitukia.com",
+        "https://jsonplaceholder.typicode.com",
         data={
         "grant_type": "password",
         "username": username,
@@ -29,18 +29,20 @@ class SomeTest(TaskSet):
         },
         headers={"x-caller-id": "aws-caller"},
         """
+
     pass
 
     def on_stop(self):
         """
         During run time the on_stop method is used for cleanup, after all tasks have been run. A good example of that
-        would be deleting recommended seedProducts from rec-cab-sync.
+        would be deleting Products from the v1 endpoint.
         :param self represents its instance within this function
         example:
         self.client.delete(
-        f"{utils.base_url}/v1/internal/agronomicPortfolioProducts/sync/{product}",
+        f"{utils.base_url}/v1/endpoint",
         headers=headers,)
         """
+
     pass
 
     @task(1)
@@ -50,9 +52,9 @@ class SomeTest(TaskSet):
         the TaskSet subclass passed in.
         requests: Locust is using the requests library under the hood to make http POST/GET/PUT/DELETE requests.
         """
-    self.client.get(
-    url="http://baseurl/endpoint"
-    )
+        self.client.get(
+            url="http://baseurl/endpoint", headers={"x-caller-id": "aws-caller"}
+        )
 
 
 class WebsiteUser(HttpLocust):
@@ -66,5 +68,6 @@ class WebsiteUser(HttpLocust):
     wait between 3 and 6 seconds after executing each task
     """
 
-  task_set = SomeTest
-  wait_time = between(3, 6)
+    task_set = SomeTest
+    wait_time = between(3, 6)
+
